@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <title>Panel: Tajlandia – Kambodża (live)</title>
+  <title>Panel: Tajlandia – Kambodża</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root { --bg: #050816; --bg-card: #0b1020; --accent: #ffb347; --accent-2: #4fd1c5; --text-main: #f9fafb; --text-muted: #9ca3af; --danger: #f97373; --ok: #4ade80; --border: #1f2933; --font-main: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
@@ -25,10 +25,11 @@
     .status-row { display:flex; align-items:center; justify-content:space-between; margin-top:4px; font-size:0.8rem; color:var(--text-muted); }
     .pill { padding:2px 8px; border-radius:999px; font-size:0.7rem; border:1px solid rgba(148,163,184,0.4); }
     .pill-red { color:var(--danger); border-color:rgba(248,113,113,0.7); }
-    .timeline { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:4px; max-height:260px; overflow-y:auto; padding-right:4px; }
+    .timeline { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:4px; max-height:300px; overflow-y:auto; padding-right:4px; }
     .event { padding:8px 9px; border-radius:8px; background:rgba(15,23,42,0.85); border:1px solid rgba(31,41,55,0.9); }
     .event-header { display:flex; justify-content:space-between; gap:8px; font-size:0.75rem; color:var(--text-muted); margin-bottom:2px; }
     .event-title { font-size:0.8rem; font-weight:500; color:var(--text-main); margin-bottom:2px; }
+    .event-title a { color:var(--accent-2); text-decoration:none; }
     .event-body { font-size:0.78rem; color:var(--text-muted); }
     .two-col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:6px; font-size:0.8rem; }
     @media (max-width:700px){ .two-col{ grid-template-columns:1fr; } }
@@ -37,160 +38,47 @@
     .dot { width:6px; height:6px; border-radius:999px; background:var(--accent-2); margin-top:4px; }
     .sources { font-size:0.7rem; color:var(--text-muted); margin-top:6px; }
     .sources a { color:var(--accent-2); text-decoration:none; }
-    .sources a:hover { text-decoration:underline; }
-    .map-placeholder { margin-top:8px; height:140px; border-radius:10px; border:1px dashed rgba(55,65,81,0.9); display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--text-muted); background:radial-gradient(circle at top,#020617,#000); }
     footer { font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:4px; }
   </style>
 </head>
 <body>
   <header>
-    <div>
-      <h1>Panel sytuacyjny: Tajlandia – Kambodża</h1>
-      <div class="meta">Status konfliktu: <strong>aktywny konflikt zbrojny</strong> · Dane z NewsData.io</div>
-    </div>
+    <div><h1>Panel: Tajlandia – Kambodża</h1>
+      <div class="meta">Status: <strong>aktywny konflikt</strong> · Dane z NewsData.io</div></div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
       <span class="badge" id="risk-badge">ŁADOWANIE...</span>
-      <span class="meta" id="last-update">Ostatnia aktualizacja: –</span>
-    </div>
+      <span class="meta" id="last-update">Ostatnia aktualizacja: –</span></div>
   </header>
   <main class="layout">
     <section class="card">
-      <h2>Kluczowe wskaźniki</h2>
+      <h2>Wskaźniki</h2>
       <div class="grid-3">
-        <div class="kpi">
-          <div class="kpi-label">Liczba artykułów (24h)</div>
-          <div class="kpi-value" id="kpi-total">–</div>
-          <div class="kpi-trend">Tajlandia + Kambodża</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Artykuły o granicy</div>
-          <div class="kpi-value" id="kpi-border">–</div>
-          <div class="kpi-trend">border, clash, conflict</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Poziom napięcia</div>
-          <div class="kpi-value" id="kpi-tension">–</div>
-          <div class="kpi-trend">Szacunek: liczba newsów</div>
-        </div>
+        <div class="kpi"><div class="kpi-label">Artykułów (24h)</div><div class="kpi-value" id="kpi-total">–</div></div>
+        <div class="kpi"><div class="kpi-label">O granicy</div><div class="kpi-value" id="kpi-border">–</div></div>
+        <div class="kpi"><div class="kpi-label">Napięcie</div><div class="kpi-value" id="kpi-tension">–</div></div>
       </div>
-      <div class="status-row">
-        <span>Ocena ryzyka podróży</span>
-        <span class="pill pill-red" id="travel-risk">Ładowanie...</span>
-      </div>
-      <h2 style="margin-top:16px;">Najnowsze aktualności</h2>
-      <ul class="timeline" id="news-list">
-        <li class="event"><div class="event-body">Ładowanie newsów...</div></li>
-      </ul>
+      <div class="status-row"><span>Ryzyko podróży:</span> <span class="pill pill-red" id="travel-risk">Ładowanie...</span></div>
+      <h2 style="margin-top:16px;">Aktualności</h2>
+      <ul class="timeline" id="news-list"><li class="event"><div class="event-body">Ładowanie newsów...</div></li></ul>
     </section>
     <section class="card">
       <h2>Analiza</h2>
-      <div class="two-col">
-        <div>
-          <strong>Co pokazują newsy</strong>
-          <ul class="list" id="insights-left">
-            <li><span class="dot"></span><span>Ładowanie danych...</span></li>
-          </ul>
-        </div>
-        <div>
-          <strong>Ważne uwagi</strong>
-          <ul class="list">
-            <li><span class="dot"></span><span>Panel zlicza artykuły z NewsData.io, nie zastępuje oficjalnych ostrzeżeń MSZ.</span></li>
-            <li><span class="dot"></span><span>Wysoka liczba newsów może oznaczać eskalację, ale nie pokazuje pełnej skali działań.</span></li>
-            <li><span class="dot"></span><span>Przed podróżą sprawdź ostrzeżenia bezpieczeństwa właściwego MSZ.</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="map-placeholder">Mapa do dalszego rozwijania</div>
+      <ul class="list" id="insights-left"><li><span class="dot"></span><span>Ładowanie danych...</span></li></ul>
       <div class="sources">Źródło: <a href="https://newsdata.io" target="_blank">NewsData.io</a></div>
     </section>
   </main>
-  <footer>Panel demonstracyjny – dane z API NewsData.io, mogą być niepełne.</footer>
+  <footer>Panel demonstracyjny – dane z API NewsData.io</footer>
   <script>
-    const API_KEY = "pub_5d5318f2676d40f19f0d5ac3348456c1";
-    const BASE_URL = "https://newsdata.io/api/1/latest";
-    async function fetchCountryNews(countryCode, keywords) {
-      const q = encodeURIComponent(keywords.join(" OR "));
-      const url = `${BASE_URL}?apikey=${API_KEY}&country=${countryCode}&q=${q}&language=en`;
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        return data.results || [];
-      } catch (e) {
-        console.error(`Błąd ${countryCode}:`, e);
-        return [];
-      }
-    }
-    function assessTensionScore(totalArticles) {
-      if (totalArticles >= 40) return { label: "bardzo wysokie", risk: "NIE PODRÓŻUJ / OMIJAJ" };
-      if (totalArticles >= 20) return { label: "wysokie", risk: "STANOWCZO ODRADZANE" };
-      if (totalArticles >= 10) return { label: "umiarkowane", risk: "UNIKAJ GRANICY" };
-      return { label: "niższe", risk: "ZACHOWAJ OSTROŻNOŚĆ" };
-    }
-    function formatDate(isoStr) {
-      if (!isoStr) return "–";
-      const d = new Date(isoStr);
-      if (isNaN(d.getTime())) return isoStr;
-      return d.toLocaleString("pl-PL", { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
-    }
-    function updateKPIs(allArticles) {
-      const total = allArticles.length;
-      const borderRelated = allArticles.filter(a => {
-        const t = (a.title || "").toLowerCase();
-        const d = (a.description || "").toLowerCase();
-        return t.includes("border") || t.includes("clash") || t.includes("conflict");
-      }).length;
-      document.getElementById("kpi-total").textContent = total;
-      document.getElementById("kpi-border").textContent = borderRelated;
-      const { label, risk } = assessTensionScore(borderRelated);
-      document.getElementById("kpi-tension").textContent = label.toUpperCase();
-      document.getElementById("travel-risk").textContent = risk;
-      document.getElementById("risk-badge").textContent = "NAPIĘCIE: " + label.toUpperCase();
-    }
-    function updateNewsList(allArticles) {
-      const container = document.getElementById("news-list");
-      container.innerHTML = "";
-      const sorted = [...allArticles].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate)).slice(0, 12);
-      if (!sorted.length) {
-        const empty = document.createElement("li");
-        empty.className = "event";
-        empty.innerHTML = '<div class="event-body">Brak nowych artykułów.</div>';
-        container.appendChild(empty);
-        return;
-      }
-      for (const art of sorted) {
-        const li = document.createElement("li");
-        li.className = "event";
-        const header = document.createElement("div");
-        header.className = "event-header";
-        header.innerHTML = `<span>${formatDate(art.pubDate)}</span><span>${art.source_id || "–"}</span>`;
-        const title = document.createElement("div");
-        title.className = "event-title";
-        const link = document.createElement("a");
-        link.href = art.link;
-        link.target = "_blank";
-        link.rel = "noreferrer";
-        link.style.color = "inherit";
-        link.style.textDecoration = "none";
-        link.textContent = art.title || "(brak tytułu)";
-        title.appendChild(link);
-        const body = document.createElement("div");
-        body.className = "event-body";
-        body.textContent = art.description ? art.description.slice(0, 180) + "…" : "";
-        li.appendChild(header);
-        li.appendChild(title);
-        li.appendChild(body);
-        container.appendChild(li);
-      }
-    }
-    function updateInsights(allArticles) {
-      const left = document.getElementById("insights-left");
-      left.innerHTML = "";
-      const li1 = document.createElement("li");
-      li1.innerHTML = '<span class="dot"></span><span>Łącznie ' + allArticles.length + ' artykułów z ostatnich zapytań.</span>';
-      left.appendChild(li1);
-    }
-    async function refreshPanel() {
-      const lastUpdateEl = document.getElementById("last-update");
-      try {
-        lastUpdateEl.textContent = "Ostatnia aktualizacja: pobieranie danych
+const API_KEY="pub_5d5318f2676d40f19f0d5ac3348456c1";
+const BASE_URL="https://newsdata.io/api/1/latest";
+async function fetchNews(code,kw){const q=encodeURIComponent(kw.join(" OR "));const url=`${BASE_URL}?apikey=${API_KEY}&country=${code}&q=${q}&language=en`;try{const r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);const d=await r.json();return d.results||[];}catch(e){console.error(`Błąd ${code}:`,e);return [];}}
+function scoreTension(n){if(n>=40)return{l:"bardzo wysokie",r:"NIE PODRÓŻUJ"};if(n>=20)return{l:"wysokie",r:"ODRADZANE"};if(n>=10)return{l:"umiarkowane",r:"UNIKAJ"};return{l:"niższe",r:"OSTROŻNOŚĆ"};}
+function fmtDate(s){if(!s)return"–";const d=new Date(s);if(isNaN(d))return s;return d.toLocaleDateString("pl-PL")+' '+d.toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"});}
+function updateUI(all){const tot=all.length;const border=all.filter(a=>(a.title||"").toLowerCase().includes("border")||(a.description||"").toLowerCase().includes("border")).length;document.getElementById("kpi-total").textContent=tot;document.getElementById("kpi-border").textContent=border;const{l,r}=scoreTension(border);document.getElementById("kpi-tension").textContent=l.toUpperCase();document.getElementById("travel-risk").textContent=r;document.getElementById("risk-badge").textContent="NAPIĘCIE: "+l.toUpperCase();const c=document.getElementById("news-list");c.innerHTML="";const s=[...all].sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)).slice(0,10);if(!s.length){c.innerHTML='<li class="event"><div class="event-body">Brak artykułów</div></li>';return;}
+for(const a of s){const li=document.createElement("li");li.className="event";const h=document.createElement("div");h.className="event-header";h.innerHTML=`<span>${fmtDate(a.pubDate)}</span><span>${a.source_id||"–"}</span>`;const t=document.createElement("div");t.className="event-title";const link=document.createElement("a");link.href=a.link;link.target="_blank";link.rel="noreferrer";link.textContent=a.title||"(bez tytułu)";t.appendChild(link);const b=document.createElement("div");b.className="event-body";b.textContent=a.description?a.description.slice(0,150)+"…":"";li.appendChild(h);li.appendChild(t);li.appendChild(b);c.appendChild(li);}
+const left=document.getElementById("insights-left");left.innerHTML='<li><span class="dot"></span><span>Łącznie '+tot+' artykułów w ostatnich zapytaniach</span></li>';}
+async function refresh(){const u=document.getElementById("last-update");try{u.textContent="Ładowanie...";const kh=await fetchNews("kh",["border","clash","conflict","Thailand"]);const th=await fetchNews("th",["border","clash","conflict","Cambodia"]);const all=[...kh,...th];updateUI(all);u.textContent="Ostatnia aktualizacja: "+new Date().toLocaleTimeString("pl-PL");}catch(e){console.error(e);u.textContent="Błąd pobierania danych";}}
+refresh();setInterval(refresh,5*60*1000);
+  </script>
+</body>
+</html>
