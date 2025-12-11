@@ -56,10 +56,29 @@
         <div class="kpi"><div class="kpi-label">Napięcie</div><div class="kpi-value" id="kpi-tension">–</div></div>
       </div>
       <div class="status-row"><span>Ryzyko:</span><span class="pill pill-red" id="travel-risk">Ładowanie...</span></div>
-            <h2 style="margin-top:16px;">Mapa konflikt</h2>
-      <div style="width:100%;height:250px;margin:10px 0;border-radius:10px;border:1px solid var(--border);background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22><defs><style>.grid{stroke:%231f2933;stroke-width:0.5}.text{fill:%239ca3af;font-size:10px}.marker-red{fill:%23ff4444}.marker-orange{fill:%23ffaa00}.marker-blue{fill:%234499ff}.line{stroke:%23ffff00;stroke-width:2;stroke-dasharray:5,5}</style></defs><g class=%22grid%22><line x1=%220%22 y1=%220%22 x2=%22400%22 y2=%220%22/><line x1=%220%22 y1=%2250%22 x2=%22400%22 y2=%2250%22/><line x1=%220%22 y1=%22100%22 x2=%22400%22 y2=%22100%22/><line x1=%220%22 y1=%22150%22 x2=%22400%22 y2=%22150%22/><line x1=%220%22 y1=%22200%22 x2=%22400%22 y2=%22200%22/><line x1=%220%22 y1=%22250%22 x2=%22400%22 y2=%22250%22/><line x1=%220%22 y1=%22300%22 x2=%22400%22 y2=%22300%22/><line x1=%220%22 y1=%220%22 x2=%220%22 y2=%22300%22/><line x1=%2250%22 y1=%220%22 x2=%2250%22 y2=%22300%22/><line x1=%22100%22 y1=%220%22 x2=%22100%22 y2=%22300%22/><line x1=%22150%22 y1=%220%22 x2=%22150%22 y2=%22300%22/><line x1=%22200%22 y1=%220%22 x2=%22200%22 y2=%22300%22/><line x1=%22250%22 y1=%220%22 x2=%22250%22 y2=%22300%22/><line x1=%22300%22 y1=%220%22 x2=%22300%22 y2=%22300%22/><line x1=%22350%22 y1=%220%22 x2=%22350%22 y2=%22300%22/></g><text class=%22text%22 x=%225%22 y=%2215%22>KAMBODŻA</text><text class=%22text%22 x=%22250%22 y=%2215%22>TAJLANDIA</text><line class=%22line%22 x1=%2280%22 y1=%2230%22 x2=%2280%22 y2=%22150%22/>ircle class=%22marker-red%22 cx=%2280%22 cy=%2250%22 r=%228%22/><text class=%22text%22 x=%2250%22 y=%2270%22>Preah Vihear</text>ircle class=%22marker-red%22 cx=%22120%22 cy=%2280%22 r=%228%22/><text class=%22text%22 x=%2280%22 y=%2295%22>Ban Nong Chan</text>ircle class=%22marker-red%22 cx=%22140%22 cy=%22100%22 r=%228%22/><text class=%22text%22 x=%2280%22 y=%22120%22>Sisaket (ostrzał)</text>ircle class=%22marker-orange%22 cx=%2280%22 cy=%22130%22 r=%228%22/><text class=%22text%22 x=%2250%22 y=%22145%22>Aranyaprathet</text>ircle class=%22marker-blue%22 cx=%22100%22 cy=%22200%22 r=%228%22/><text class=%22text%22 x=%2280%22 y=%22215%22>Bangkok</text>ircle class=%22marker-blue%22 cx=%2250%22 cy=%2280%22 r=%228%22/><text class=%22text%22 x=%2220%22 y=%2295%22>Phnom Penh</text><rect x=%2270%22 y=%2270%22 width=%2280%22 height=%2280%22 fill=%22red%22 opacity=%220.1%22 stroke=%22red%22 stroke-dasharray=%223,3%22/><text class=%22text%22 x=%2280%22 y=%22165%22 font-weight=%22bold%22>⚠ STREFA OSTRZAŁU</text></svg>') center/cover;position:relative;">
-        <div style="position:absolute;bottom:10px;left:10px;font-size:0.7rem;color:var(--text-muted);background:rgba(0,0,0,0.7);padding:5px 10px;border-radius:5px;">🔴 Ostrzał  🟠 Główne punkty konfliktu  🔵 Miasta  📍 Granica (linia żółta)</div>
+                  <h2 style="margin-top:16px;">Mapa konfliktu</h2>
+      <div style="background:linear-gradient(135deg,#0a1428 0,#0d1a2a 100%);border:1px solid var(--border);border-radius:10px;padding:15px;margin:10px 0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;font-size:0.8rem;">
+          <div>
+            <div style="color:var(--text-main);font-weight:bold;margin-bottom:8px;">🇰🇭 KAMBODŻA</div>
+            <div style="color:var(--text-muted);">• Phnom Penh (stolica)</div>
+            <div style="color:var(--text-muted);">• Bazy militarne</div>
+            <div style="color:var(--text-muted);">• Preah Vihear (sporna)</div>
+          </div>
+          <div>
+            <div style="color:var(--text-main);font-weight:bold;margin-bottom:8px;">🇹🇭 TAJLANDIA</div>
+            <div style="color:#ff4444;font-weight:bold;">🔴 Ban Nong Chan - OSTRZAŁ</div>
+            <div style="color:var(--text-muted);">• Sisaket (prowincja)</div>
+            <div style="color:var(--text-muted);">• Surin (blisko granicy)</div>
+          </div>
+        </div>
+        <div style="margin-top:15px;padding-top:15px;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.75rem;">
+          <div style="margin-bottom:8px;"><span style="display:inline-block;width:12px;height:12px;background:#ff4444;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>Ostrzał terytorum Tajlandii</div>
+          <div style="margin-bottom:8px;"><span style="display:inline-block;width:12px;height:12px;background:#ffaa00;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>Główne punkty konfliktu (granica)</div>
+          <div><span style="display:inline-block;width:12px;height:12px;background:#4499ff;border-radius:50%;margin-right:6px;vertical-align:middle;"></span>Miasta i stolice</div>
+        </div>
       </div>
+
       <div class="info-box" id="war-info">Aktualna sytuacja: Obliczanie danych...</div>
 
       <div class="info-box" id="war-info">Aktualna sytuacja: Obliczanie danych...</div>
@@ -179,4 +198,5 @@ setInterval(refresh,5*60*1000);
   </script>
 </body>
 </html>
+
 
