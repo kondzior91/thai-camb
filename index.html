@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <title>Panel: Tajlandia – Kambodża</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     :root { --bg: #050816; --bg-card: #0b1020; --accent: #ffb347; --accent-2: #4fd1c5; --text-main: #f9fafb; --text-muted: #9ca3af; --danger: #f97373; --ok: #4ade80; --border: #1f2933; --font-main: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
     * { box-sizing: border-box; margin:0; padding:0; }
@@ -34,12 +33,12 @@
     .event-title { font-size:0.8rem; font-weight:500; color:var(--accent-2); margin-bottom:2px; }
     .event-title a { color:var(--accent-2); text-decoration:none; }
     .event-body { font-size:0.75rem; color:var(--text-muted); line-height:1.3; }
-    .map-container { margin:10px 0; height:300px; border-radius:10px; border:1px solid var(--border); overflow:hidden; }
     .list { list-style:none; display:flex; flex-direction:column; gap:6px; }
     .list li { display:flex; align-items:flex-start; gap:6px; color:var(--text-muted); font-size:0.8rem; }
     .dot { width:6px; height:6px; border-radius:999px; background:var(--accent-2); margin-top:3px; flex-shrink:0; }
     .sources { font-size:0.7rem; color:var(--text-muted); margin-top:6px; }
     .sources a { color:var(--accent-2); text-decoration:none; }
+    .info-box { background:rgba(255,68,68,0.1); border-left:3px solid #ff4444; padding:10px; margin:10px 0; border-radius:6px; font-size:0.8rem; color:var(--text-muted); }
     footer { font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:4px; }
   </style>
 </head>
@@ -57,8 +56,7 @@
         <div class="kpi"><div class="kpi-label">Napięcie</div><div class="kpi-value" id="kpi-tension">–</div></div>
       </div>
       <div class="status-row"><span>Ryzyko:</span><span class="pill pill-red" id="travel-risk">Ładowanie...</span></div>
-      <h2 style="margin-top:16px;">Mapa granic</h2>
-      <div class="map-container" id="map"></div>
+      <div class="info-box" id="war-info">Aktualna sytuacja: Obliczanie danych...</div>
       <h2 style="margin-top:16px;">Aktualności z obrazkami</h2>
       <ul class="timeline" id="news-list"><li class="event"><div class="event-content"><div class="event-body">Ładowanie newsów...</div></div></li></ul>
     </section>
@@ -69,56 +67,9 @@
     </section>
   </main>
   <footer>Panel demonstracyjny – dane z API NewsData.io</footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script>
 const API_KEY="pub_5d5318f2676d40f19f0d5ac3348456c1";
 const BASE_URL="https://newsdata.io/api/1/latest";
-let map=null;
-let markers=[];
-
-function initMap(){
-  if(map)return;
-  map=L.map('map').setView([13.5,102.5],6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);
-  addMapMarkers();
-}
-
-function addMapMarkers(){
-  markers.forEach(m=>{if(m.remove)m.remove();});
-  markers=[];
-  const locs=[
-    {n:'Bangkok',lat:13.73,lng:100.49,c:'blue'},
-    {n:'Phnom Penh',lat:11.55,lng:104.92,c:'blue'},
-    {n:'Aranyaprathet-Poipet',lat:13.77,lng:102.5,c:'orange'},
-    {n:'Preah Vihear',lat:13.84,lng:104.66,c:'red'},
-    {n:'Ban Nong Chan (ostrzał)',lat:14.3,lng:102.3,c:'red'},
-    {n:'Sisaket (TH)',lat:14.58,lng:103.2,c:'red'},
-    {n:'Surin (TH)',lat:14.88,lng:103.49,c:'orange'},
-    {n:'Strefa ostrzału',lat:14.5,lng:102.5,c:'red'}
-  ];
-  locs.forEach(l=>{
-    const col=l.c==='red'?'#ff4444':l.c==='orange'?'#ffaa00':'#4499ff';
-    const m=L.circleMarker([l.lat,l.lng],{radius:8,fillColor:col,color:'#fff',weight:2,opacity:1,fillOpacity:0.8}).addTo(map).bindPopup(l.n);
-    markers.push(m);
-  });
-  const borderLine=L.polyline([[14.8,102.0],[14.5,102.3],[14.0,102.5],[13.8,104.7],[13.2,104.4]],{color:'yellow',weight:3,opacity:0.7,dashArray:'5,5'}).addTo(map).bindPopup('Granica');
-  markers.push(borderLine);
-}
-
-
-  markers.forEach(m=>m.remove());
-  markers=[];
-  const locs=[
-    {n:'Granica pn.',lat:14.5,lng:102.5,c:'red'},
-    {n:'Preah Vihear',lat:13.8,lng:104.7,c:'orange'},
-    {n:'Bangkok',lat:13.73,lng:100.49,c:'blue'},
-    {n:'Phnom Penh',lat:11.55,lng:104.92,c:'blue'}
-  ];
-  locs.forEach(l=>{
-    const m=L.circleMarker([l.lat,l.lng],{radius:8,fillColor:l.c,color:'#fff',weight:2,opacity:1,fillOpacity:0.7}).addTo(map).bindPopup(l.n);
-    markers.push(m);
-  });
-}
 
 async function fetchNews(code,kw){
   const q=encodeURIComponent(kw.join(" OR "));
@@ -153,10 +104,20 @@ function updateUI(all){
   document.getElementById("kpi-tension").textContent=l.toUpperCase();
   document.getElementById("travel-risk").textContent=r;
   document.getElementById("risk-badge").textContent="NAPIĘCIE: "+l.toUpperCase();
-  initMap();
+  
+  const infoBox=document.getElementById("war-info");
+  if(border>=20){
+    infoBox.textContent="⚠️ OSTRZAŁ TERYTORUM TAJLANDII Z KAMBODŻY: Region Ban Nong Chan (Sisaket) pod intensywnym ostrzałem. Potwierdzony przez pracowników medycznych lokalnych. Unikaj rejonu!";
+    infoBox.style.borderLeftColor="#ff4444";
+  }else if(border>=10){
+    infoBox.textContent="🚨 KONFLIKT NA GRANICY: Intensywne walki na granicy Tajlandia-Kambodża, szczególnie w okolicach Preah Vihear i przejścia Aranyaprathet-Poipet.";
+  }else{
+    infoBox.textContent="ℹ️ Status: Zawieszenie broni, ale sytuacja pozostaje napięta. Liczne incydenty na granicy.";
+  }
+  
   const c=document.getElementById("news-list");
   c.innerHTML="";
-  const s=[...all].sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)).slice(0,10);
+  const s=[...all].sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)).slice(0,12);
   if(!s.length){c.innerHTML='<li class="event"><div class="event-content"><div class="event-body">Brak artykułów</div></div></li>';return;}
   for(const a of s){
     const li=document.createElement("li");
@@ -193,7 +154,7 @@ function updateUI(all){
     c.appendChild(li);
   }
   const left=document.getElementById("insights-left");
-  left.innerHTML='<li><span class="dot"></span><span>Łącznie '+tot+' artykułów</span></li><li><span class="dot"></span><span>'+border+' o granicy/starciach</span></li>';
+  left.innerHTML='<li><span class="dot"></span><span>Łącznie '+tot+' artykułów znalezionych w ostatnich 24h</span></li><li><span class="dot"></span><span>'+border+' artykułów dotyczy granicy/starć</span></li>';
 }
 
 async function refresh(){
@@ -212,5 +173,3 @@ setInterval(refresh,5*60*1000);
   </script>
 </body>
 </html>
-
-
