@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Panel: Tajlandia – Kambodża</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     :root { --bg: #050816; --bg-card: #0b1020; --accent: #ffb347; --accent-2: #4fd1c5; --text-main: #f9fafb; --text-muted: #9ca3af; --danger: #f97373; --ok: #4ade80; --border: #1f2933; --font-main: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
     * { box-sizing: border-box; margin:0; padding:0; }
@@ -25,12 +26,16 @@
     .status-row { display:flex; align-items:center; justify-content:space-between; margin-top:4px; font-size:0.8rem; color:var(--text-muted); }
     .pill { padding:2px 8px; border-radius:999px; font-size:0.7rem; border:1px solid rgba(148,163,184,0.4); }
     .pill-red { color:var(--danger); border-color:rgba(248,113,113,0.7); }
-    .timeline { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:4px; max-height:300px; overflow-y:auto; padding-right:4px; }
-    .event { padding:8px 9px; border-radius:8px; background:rgba(15,23,42,0.85); border:1px solid rgba(31,41,55,0.9); }
+    .timeline { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:4px; max-height:350px; overflow-y:auto; padding-right:4px; }
+    .event { padding:8px 9px; border-radius:8px; background:rgba(15,23,42,0.85); border:1px solid rgba(31,41,55,0.9); display:flex; gap:8px; }
+    .event-img { width:60px; height:60px; border-radius:6px; background:rgba(31,41,55,0.5); flex-shrink:0; overflow:hidden; }
+    .event-img img { width:100%; height:100%; object-fit:cover; }
+    .event-content { flex:1; min-width:0; }
     .event-header { display:flex; justify-content:space-between; gap:8px; font-size:0.75rem; color:var(--text-muted); margin-bottom:2px; }
     .event-title { font-size:0.8rem; font-weight:500; color:var(--text-main); margin-bottom:2px; }
     .event-title a { color:var(--accent-2); text-decoration:none; }
-    .event-body { font-size:0.78rem; color:var(--text-muted); }
+    .event-body { font-size:0.78rem; color:var(--text-muted); line-height:1.3; }
+    .map-container { margin-top:10px; height:300px; border-radius:10px; border:1px solid var(--border); overflow:hidden; }
     .two-col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:6px; font-size:0.8rem; }
     @media (max-width:700px){ .two-col{ grid-template-columns:1fr; } }
     .list { list-style:none; display:flex; flex-direction:column; gap:6px; }
@@ -58,8 +63,10 @@
         <div class="kpi"><div class="kpi-label">Napięcie</div><div class="kpi-value" id="kpi-tension">–</div></div>
       </div>
       <div class="status-row"><span>Ryzyko podróży:</span> <span class="pill pill-red" id="travel-risk">Ładowanie...</span></div>
+      <h2 style="margin-top:16px;">Mapa granic</h2>
+      <div class="map-container" id="map"></div>
       <h2 style="margin-top:16px;">Aktualności</h2>
-      <ul class="timeline" id="news-list"><li class="event"><div class="event-body">Ładowanie newsów...</div></li></ul>
+      <ul class="timeline" id="news-list"><li class="event"><div class="event-content"><div class="event-body">Ładowanie newsów...</div></div></li></ul>
     </section>
     <section class="card">
       <h2>Analiza</h2>
@@ -68,17 +75,28 @@
     </section>
   </main>
   <footer>Panel demonstracyjny – dane z API NewsData.io</footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script>
 const API_KEY="pub_5d5318f2676d40f19f0d5ac3348456c1";
 const BASE_URL="https://newsdata.io/api/1/latest";
+let map=null;
+let markers=[];
+
+function initMap(){if(map)return;map=L.map('map').setView([13.5,102.5],6);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);addMapMarkers();}
+
+function addMapMarkers(){markers.forEach(m=>m.remove());markers=[];const locations=[{name:'Granica Tajlandia-Kambodża (pn)',lat:14.5,lng:102.5,color:'red'},{name:'Preah Vihear',lat:13.8,lng:104.7,color:'orange'},{name:'Bangkok',lat:13.73,lng:100.49,color:'blue'},{name:'Phnom Penh',lat:11.55,lng:104.92,color:'blue'}];locations.forEach(l=>{const marker=L.circleMarker([l.lat,l.lng],{radius:8,fillColor:l.color,color:'#fff',weight:2,opacity:1,fillOpacity:0.7}).addTo(map).bindPopup(l.name);markers.push(marker);});}
+
 async function fetchNews(code,kw){const q=encodeURIComponent(kw.join(" OR "));const url=`${BASE_URL}?apikey=${API_KEY}&country=${code}&q=${q}&language=en`;try{const r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);const d=await r.json();return d.results||[];}catch(e){console.error(`Błąd ${code}:`,e);return [];}}
+
 function scoreTension(n){if(n>=40)return{l:"bardzo wysokie",r:"NIE PODRÓŻUJ"};if(n>=20)return{l:"wysokie",r:"ODRADZANE"};if(n>=10)return{l:"umiarkowane",r:"UNIKAJ"};return{l:"niższe",r:"OSTROŻNOŚĆ"};}
+
 function fmtDate(s){if(!s)return"–";const d=new Date(s);if(isNaN(d))return s;return d.toLocaleDateString("pl-PL")+' '+d.toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"});}
-function updateUI(all){const tot=all.length;const border=all.filter(a=>(a.title||"").toLowerCase().includes("border")||(a.description||"").toLowerCase().includes("border")).length;document.getElementById("kpi-total").textContent=tot;document.getElementById("kpi-border").textContent=border;const{l,r}=scoreTension(border);document.getElementById("kpi-tension").textContent=l.toUpperCase();document.getElementById("travel-risk").textContent=r;document.getElementById("risk-badge").textContent="NAPIĘCIE: "+l.toUpperCase();const c=document.getElementById("news-list");c.innerHTML="";const s=[...all].sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)).slice(0,10);if(!s.length){c.innerHTML='<li class="event"><div class="event-body">Brak artykułów</div></li>';return;}
-for(const a of s){const li=document.createElement("li");li.className="event";const h=document.createElement("div");h.className="event-header";h.innerHTML=`<span>${fmtDate(a.pubDate)}</span><span>${a.source_id||"–"}</span>`;const t=document.createElement("div");t.className="event-title";const link=document.createElement("a");link.href=a.link;link.target="_blank";link.rel="noreferrer";link.textContent=a.title||"(bez tytułu)";t.appendChild(link);const b=document.createElement("div");b.className="event-body";b.textContent=a.description?a.description.slice(0,150)+"…":"";li.appendChild(h);li.appendChild(t);li.appendChild(b);c.appendChild(li);}
-const left=document.getElementById("insights-left");left.innerHTML='<li><span class="dot"></span><span>Łącznie '+tot+' artykułów w ostatnich zapytaniach</span></li>';}
-async function refresh(){const u=document.getElementById("last-update");try{u.textContent="Ładowanie...";const kh=await fetchNews("kh",["border","clash","conflict","Thailand"]);const th=await fetchNews("th",["border","clash","conflict","Cambodia"]);const all=[...kh,...th];updateUI(all);u.textContent="Ostatnia aktualizacja: "+new Date().toLocaleTimeString("pl-PL");}catch(e){console.error(e);u.textContent="Błąd pobierania danych";}}
-refresh();setInterval(refresh,5*60*1000);
-  </script>
-</body>
-</html>
+
+function updateUI(all){const tot=all.length;const border=all.filter(a=>(a.title||"").toLowerCase().includes("border")||(a.description||"").toLowerCase().includes("border")).length;document.getElementById("kpi-total").textContent=tot;document.getElementById("kpi-border").textContent=border;const{l,r}=scoreTension(border);document.getElementById("kpi-tension").textContent=l.toUpperCase();document.getElementById("travel-risk").textContent=r;document.getElementById("risk-badge").textContent="NAPIĘCIE: "+l.toUpperCase();
+
+const c=document.getElementById("news-list");c.innerHTML="";const s=[...all].sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate)).slice(0,12);if(!s.length){c.innerHTML='<li class="event"><div class="event-content"><div class="event-body">Brak artykułów</div></div></li>';return;}
+
+for(const a of s){const li=document.createElement("li");li.className="event";if(a.image_url){const img=document.createElement("div");img.className="event-img";const imgtag=document.createElement("img");imgtag.src=a.image_url;imgtag.onerror=()=>{img.style.display="none";};img.appendChild(imgtag);li.appendChild(img);}
+const content=document.createElement("div");content.className="event-content";const h=document.createElement("div");h.className="event-header";h.innerHTML=`<span>${fmtDate(a.pubDate)}</span><span>${a.source_id||"–"}</span>`;const t=document.createElement("div");t.className="event-title";const link=document.createElement("a");link.href=a.link;link.target="_blank";link.rel="noreferrer";link.textContent=a.title||"(bez tytułu)";t.appendChild(link);const b=document.createElement("div");b.className="event-body";b.textContent=a.description?a.description.slice(0,120)+"…":"";content.appendChild(h);content.appendChild(t);content.appendChild(b);li.appendChild(content);c.appendChild(li);}
+
+const left=document.getElementById("insights-left");left.innerHTML='<li><span class="dot"></span><span>Łącznie '+tot+' artykułów</span></li><li><span class="dot
