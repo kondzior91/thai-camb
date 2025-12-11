@@ -5,36 +5,10 @@
   <title>Panel: Tajlandia – Kambodża (live)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root {
-      --bg: #050816;
-      --bg-card: #0b1020;
-      --accent: #ffb347;
-      --accent-2: #4fd1c5;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --danger: #f97373;
-      --ok: #4ade80;
-      --border: #1f2933;
-      --font-main: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
+    :root { --bg: #050816; --bg-card: #0b1020; --accent: #ffb347; --accent-2: #4fd1c5; --text-main: #f9fafb; --text-muted: #9ca3af; --danger: #f97373; --ok: #4ade80; --border: #1f2933; --font-main: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
     * { box-sizing: border-box; margin:0; padding:0; }
-    body {
-      font-family: var(--font-main);
-      background: radial-gradient(circle at top,#111827 0,#020617 55%,#000 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 24px;
-      display:flex;
-      flex-direction:column;
-      gap:24px;
-    }
-    header {
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-    }
+    body { font-family: var(--font-main); background: radial-gradient(circle at top,#111827 0,#020617 55%,#000 100%); color: var(--text-main); min-height: 100vh; padding: 24px; display:flex; flex-direction:column; gap:24px; }
+    header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; }
     header h1 { font-size:1.6rem; letter-spacing:0.04em; }
     header span.badge { padding:4px 10px; border-radius:999px; background:rgba(248,113,113,0.12); color:var(--danger); font-size:0.8rem; border:1px solid rgba(248,113,113,0.4); }
     header .meta { font-size:0.8rem; color:var(--text-muted); }
@@ -212,7 +186,11 @@
     function updateInsights(allArticles) {
       const left = document.getElementById("insights-left");
       left.innerHTML = "";
-      const khCount = allArticles.filter(a => (a.country || []).includes("KH")).length;
-      const thCount = allArticles.filter(a => (a.country || []).includes("TH")).length;
       const li1 = document.createElement("li");
-      li1.innerHTML = '<span class="dot"></span><span>Łącznie ' + allArticles.length
+      li1.innerHTML = '<span class="dot"></span><span>Łącznie ' + allArticles.length + ' artykułów z ostatnich zapytań.</span>';
+      left.appendChild(li1);
+    }
+    async function refreshPanel() {
+      const lastUpdateEl = document.getElementById("last-update");
+      try {
+        lastUpdateEl.textContent = "Ostatnia aktualizacja: pobieranie danych
