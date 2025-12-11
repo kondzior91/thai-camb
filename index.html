@@ -84,40 +84,27 @@ function initMap(){
 }
 
 function addMapMarkers(){
-  markers.forEach(m=>m.remove());
+  markers.forEach(m=>{if(m.remove)m.remove();});
   markers=[];
   const locs=[
-    {n:'Bangkok (stolica TH)',lat:13.73,lng:100.49,c:'blue',desc:''},
-    {n:'Phnom Penh (stolica KH)',lat:11.55,lng:104.92,c:'blue',desc:''},
-    {n:'Przejście Aranyaprathet-Poipet',lat:13.77,lng:102.5,c:'orange',desc:'Główny konflikt'},
-    {n:'Preah Vihear (świątynia)',lat:13.84,lng:104.66,c:'red',desc:'Sporna granica'},
-    {n:'Ban Nong Chan (ostrzał TH)',lat:14.3,lng:102.3,c:'red',desc:'Ostrzał terytorum TH'},
-    {n:'Sisaket (TH)',lat:14.58,lng:103.2,c:'red',desc:'Prowincja w strefie konfliktu'},
-    {n:'Surin (TH)',lat:14.88,lng:103.49,c:'orange',desc:'Blisko granicy'},
-    {n:'Oddział graniczny TH nr 2',lat:13.5,lng:102.7,c:'red',desc:'Starcia'},
-    {n:'Kamhaengphet (KH)',lat:13.2,lng:104.4,c:'red',desc:'Bazy KH'},
-    {n:'Strefa ostrzału (północna)',lat:14.5,lng:102.5,c:'red',desc:'Ostrzał pociskami'}
+    {n:'Bangkok',lat:13.73,lng:100.49,c:'blue'},
+    {n:'Phnom Penh',lat:11.55,lng:104.92,c:'blue'},
+    {n:'Aranyaprathet-Poipet',lat:13.77,lng:102.5,c:'orange'},
+    {n:'Preah Vihear',lat:13.84,lng:104.66,c:'red'},
+    {n:'Ban Nong Chan (ostrzał)',lat:14.3,lng:102.3,c:'red'},
+    {n:'Sisaket (TH)',lat:14.58,lng:103.2,c:'red'},
+    {n:'Surin (TH)',lat:14.88,lng:103.49,c:'orange'},
+    {n:'Strefa ostrzału',lat:14.5,lng:102.5,c:'red'}
   ];
   locs.forEach(l=>{
     const col=l.c==='red'?'#ff4444':l.c==='orange'?'#ffaa00':'#4499ff';
-    const m=L.circleMarker([l.lat,l.lng],{radius:10,fillColor:col,color:'#fff',weight:2,opacity:1,fillOpacity:0.8}).addTo(map).bindPopup(`<b>${l.n}</b><br/>${l.desc}`);
+    const m=L.circleMarker([l.lat,l.lng],{radius:8,fillColor:col,color:'#fff',weight:2,opacity:1,fillOpacity:0.8}).addTo(map).bindPopup(l.n);
     markers.push(m);
   });
-  
-  // Linia granicy Tajlandia-Kambodża
-  const borderLine=L.polyline(
-    [[14.8,102.0],[14.5,102.3],[14.0,102.5],[13.8,104.7],[13.2,104.4],[12.5,104.8]],
-    {color:'yellow',weight:3,opacity:0.7,dashArray:'5,5'}
-  ).addTo(map).bindPopup('Granica Tajlandia-Kambodża');
+  const borderLine=L.polyline([[14.8,102.0],[14.5,102.3],[14.0,102.5],[13.8,104.7],[13.2,104.4]],{color:'yellow',weight:3,opacity:0.7,dashArray:'5,5'}).addTo(map).bindPopup('Granica');
   markers.push(borderLine);
-  
-  // Strefa ostrzału (półtransparentny prostokąt)
-  const fireZone=L.rectangle(
-    [[14.7,102.0],[14.1,103.0]],
-    {color:'red',weight:2,fillColor:'red',fillOpacity:0.15,dashArray:'3,3'}
-  ).addTo(map).bindPopup('Strefa ostrzału terytorum TH');
-  markers.push(fireZone);
 }
+
 
   markers.forEach(m=>m.remove());
   markers=[];
@@ -225,4 +212,5 @@ setInterval(refresh,5*60*1000);
   </script>
 </body>
 </html>
+
 
